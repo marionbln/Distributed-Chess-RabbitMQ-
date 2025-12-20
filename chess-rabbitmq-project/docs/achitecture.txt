@@ -1,0 +1,31 @@
+Architecture
+
+
++---------------------------+
+|        Producteur         |
+|  (Moteur de partie échecs)|
++---------------------------+
+              |
+              |  événements (JSON)
+              v
++----------------------------------+
+|            RabbitMQ              |
+|  Exchange : chess.events (fanout)|
++----------------------------------+
+      |            |            |
+      |            |            |
+      v            v            v
++-----------+ +-----------+ +-------------+
+| Validation| |  Analyse  | | Enregistrement|
+|  Service  | |  Service  | |   Service    |
++-----------+ +-----------+ +-------------+
+                                   |
+                                   v
+                              game_123.txt
+
+      |
+      v
++-----------------------------+
+|      Service Spectateur     |
+|  (affichage temps réel)     |
++-----------------------------+
