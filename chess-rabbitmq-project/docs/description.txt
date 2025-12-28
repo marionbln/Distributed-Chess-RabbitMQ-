@@ -1,0 +1,104 @@
+# Projet d’échecs distribué avec RabbitMQ et IA
+
+Ce projet implémente une partie d’échecs distribuée en utilisant une
+architecture orientée événements basée sur RabbitMQ.
+
+Chaque composant est un service indépendant qui communique uniquement
+via des événements JSON diffusés sur un exchange commun.
+
+---
+
+## Principe général
+
+Un seul service est autoritaire sur l’état du jeu.
+Tous les autres services sont passifs et se contentent d’écouter
+les événements diffusés.
+
+Les services peuvent être lancés ou arrêtés indépendamment
+sans casser la partie en cours.
+
+---
+
+## Technologies utilisées
+
+Python  
+RabbitMQ  
+python-chess  
+Stockfish  
+OpenAI API  
+Tkinter  
+
+---
+
+## Architecture des services
+
+### producer_human.py
+Permet à un joueur humain de jouer les BLANCS.
+Les coups sont saisis au clavier au format UCI.
+
+### producer_ai.py
+Intelligence artificielle jouant les NOIRS.
+Les coups sont calculés à l’aide du moteur Stockfish.
+
+### validation_service.py
+Service central et autoritaire.
+Il valide la légalité des coups et maintient le plateau officiel.
+
+### analysis_service.py
+Service passif d’analyse.
+Il rejoue la partie localement et fournit une évaluation Stockfish.
+
+### explanation_service.py
+Service pédagogique.
+Il génère une explication textuelle des coups à l’aide d’une IA.
+
+### spectator_service.py
+Interface graphique spectateur.
+Affiche le plateau, l’évaluation, le meilleur coup et l’explication.
+
+### storage_service.py
+Service de persistance.
+Enregistre les événements de la partie dans des fichiers JSON.
+
+---
+
+## Événements principaux
+
+game_started  
+move_proposed  
+move_validated  
+analysis  
+move_explained  
+game_ended  
+
+Tous les événements sont diffusés sur l’exchange `chess.events`.
+
+---
+
+## Lancement du projet
+
+1. Lancer RabbitMQ
+2. Démarrer validation_service.py
+3. Démarrer les services passifs souhaités
+   analysis_service
+   explanation_service
+   spectator_service
+   storage_service
+4. Lancer producer_human.py
+5. Lancer producer_ai.py
+
+---
+
+## Remarques importantes
+
+Le service de validation est le seul à modifier l’état officiel du jeu.  
+Les autres services ne font que réagir aux événements.  
+Le projet est conçu pour être pédagogique et extensible.
+
+---
+
+## Objectif du projet
+
+Illustrer une architecture distribuée événementielle
+avec séparation stricte des responsabilités,
+appliquée à un jeu d’échecs enrichi par de l’analyse et de l’IA pédagogique.
